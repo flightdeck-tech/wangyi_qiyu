@@ -124,6 +124,7 @@ static NSString *const EVENT_CHANNEL_NAME = @"plugins.com.tmd/event_qiyu";
         if (self.viewBackButtonColor) {
             sessionViewController.navigationItem.leftBarButtonItem.tintColor = self.viewBackButtonColor;
         }
+        nav.modalPresentationStyle = UIModalPresentationFullScreen;
         [UIApplication.sharedApplication.delegate.window.rootViewController presentViewController:nav animated:YES completion:nil];
         result(nil);
     }

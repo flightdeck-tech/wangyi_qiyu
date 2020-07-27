@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Color;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.qiyukf.unicorn.api.*;
 import com.qiyukf.unicorn.api.lifecycle.SessionLifeCycleListener;
 import com.qiyukf.unicorn.api.lifecycle.SessionLifeCycleOptions;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 
@@ -54,6 +57,7 @@ public class WangyiQiyuPlugin implements MethodCallHandler, EventChannel.StreamH
     channel.setMethodCallHandler(instance);
     final EventChannel eventChannel = new EventChannel(registrar.messenger(), "plugins.com.tmd/event_qiyu");
     eventChannel.setStreamHandler(instance);
+    ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(registrar.context()));
   }
 
   public WangyiQiyuPlugin(Registrar registrar) {
@@ -108,6 +112,27 @@ public class WangyiQiyuPlugin implements MethodCallHandler, EventChannel.StreamH
           customInfo = sourceDict.get("customInfo") != null ? (String) sourceDict.get("customInfo") : "";
         }
         source = new ConsultSource(title, urlString, customInfo);
+        if (sourceDict != null && sourceDict.containsKey("productDetail")) {
+          Map<String, Object> productMap = (Map<String, Object>) sourceDict.get("productDetail");
+          ProductDetail.Builder productDetail = new ProductDetail.Builder();
+          if (productMap.containsKey("title")) {
+            productDetail.setTitle((String) productMap.get("title"));
+          }
+          if (productMap.containsKey("desc")) {
+            productDetail.setDesc((String) productMap.get("desc"));
+          }
+          if (productMap.containsKey("note")) {
+            productDetail.setNote((String) productMap.get("note"));
+          }
+          if (productMap.containsKey("picture")) {
+            productDetail.setPicture((String) productMap.get("picture"));
+          }
+          if (productMap.containsKey("alwaysSend")) {
+            productDetail.setAlwaysSend((Boolean) productMap.get("alwaysSend"));
+          }
+
+          source.productDetail = productDetail.build();
+        }
         source.groupId = groupId;
         source.staffId = staffId;
         source.robotId = robotId;
